@@ -1,0 +1,15 @@
+<%-include('partials/header')%><%-include('partials/navbar')%>
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-header">Human Resource Job Titles</div>
+    <ul class="list-group list-group-flush">
+      <% titles.forEach((title)=> {%>
+      <a href="/employeeEvaluation?job_title='<%=title.job_title%>'">
+        <li class="list-group-item"><%=title.job_title%></li>
+      </a>
+      <%})%>
+    </ul>
+  </div>
+</div>
+
+<%-include('partials/footer')%>
