@@ -4,7 +4,9 @@
     <div class="card-header">Human Resource Job Titles</div>
     <ul class="list-group list-group-flush">
       <% titles.forEach((title)=> {%>
-      <a href="/employeeEvaluation?job_title='<%=title.job_title%>'">
+      <a
+        href="/employeeEvaluation?job_title='<%=title.job_title.replace('&','%26')%>'"
+      >
         <li class="list-group-item"><%=title.job_title%></li>
       </a>
       <%})%>
