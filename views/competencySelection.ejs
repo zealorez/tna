@@ -1,74 +1,57 @@
-<%-include('partials/header')%><%-include('partials/navbar')%>
+<%-include('partials/header')%> <%-include('partials/navbar')%>
 <div class="container">
   <h2 class="mt-2"><%=competency.competency%></h2>
-  <%competency.info.forEach((level,index)=> {%> <% for(let i=0; i <
-  requirements.length;i += 1) { %> <%if (requirements[i].competency ===
-  level.competency && requirements[i].level === level.level) { %>
   <form
-    action="/competencies?level=<%=level.level%>&competency=<%=level.competency%>"
+    action="/evaluationForm/<%=evaluationId%>/<%=category%>/competencies/<%=competencyId%>"
     method="POST"
   >
+    <%competency.info.forEach((level,index)=> {%> <% for(let i=0; i <
+    requirements.length;i +=1) { %> <%if
+    (requirements[i].competency===level.competency &&
+    requirements[i].level===level.level) { %>
     <div style="background-color: yellow" class="card">
       <div class="card-body">
-        <h5 class="card-title"><%=level.level%></h5>
-        <p class="card-text"><%=level.description%></p>
-        <button class="btn btn-primary mb-2" type="submit">Add</button>
-        <button
-          class="btn btn-primary mb-2"
-          type="button"
-          data-toggle="collapse"
-          data-target="#competency<%=index%>"
-          aria-expanded="false"
-          aria-controls="collapseExample"
-        >
-          Add Action Plan
-        </button>
-        <div class="collapse" id="competency<%=index%>">
-          <div class="card card-body">
-            <textarea
-              name="actionPlan"
-              type="textarea"
-              rows="10"
-              cols="50"
-            ></textarea>
-          </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="levelId"
+            id="exampleRadios<%=index%>"
+            value="<%=level.id%>"
+          />
+          <label class="form-check-label" for="exampleRadios<%=index%>">
+            <h5><%=level.level%></h5>
+          </label>
+          <p class="card-text"><%=level.description%></p>
         </div>
       </div>
     </div>
-  </form>
-  <%return%> <%}%><%}%>
-  <form
-    action="/competencies?level=<%=level.level%>&competency=<%=level.competency%>"
-    method="POST"
-  >
+    <%return%> <%}%> <%}%>
     <div class="card">
       <div class="card-body">
-        <h5 class="card-title"><%=level.level%></h5>
-        <p class="card-text"><%=level.description%></p>
-        <button type="submit" class="btn btn-primary mb-2">Add</button>
-        <button
-          class="btn btn-primary mb-2"
-          type="button"
-          data-toggle="collapse"
-          data-target="#competency<%=index%>"
-          aria-expanded="false"
-          aria-controls="collapseExample"
-        >
-          Add Action Plan
-        </button>
-        <div class="collapse" id="competency<%=index%>">
-          <div class="card card-body">
-            <textarea
-              name="actionPlan"
-              type="textarea"
-              rows="10"
-              cols="50"
-            ></textarea>
-          </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="levelId"
+            id="exampleRadios<%=index%>"
+            value="<%=level.id%>"
+          />
+          <label class="form-check-label" for="exampleRadios<%=index%>">
+            <h5><%=level.level%></h5>
+          </label>
+          <p class="card-text"><%=level.description%></p>
         </div>
       </div>
     </div>
+    <%})%>
+    <div>
+      <label class="mt-5" for="actionPlan"><h3>Action Plan</h3></label>
+    </div>
+    <textarea name="actionPlan" id="actionPlan" cols="60" rows="10"></textarea>
+    <div>
+      <button class="btn btn-primary" type="submit">Add Competency</button>
+    </div>
   </form>
-  <%})%>
 </div>
 <%-include('partials/footer')%>

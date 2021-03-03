@@ -1,0 +1,66 @@
+<%-include('partials/header')%><%-include('partials/navbar')%>
+<div class="container">
+  <div class="row mb-2">
+    <div class="col-8">
+      <label for="jobTitle"><h1>Job Title</h1></label>
+      <input
+        class="form-control"
+        type="text"
+        id="jobTitle"
+        name="jobTitle"
+        value="<%=jobInfo.job_title%>"
+        disabled
+      />
+    </div>
+  </div>
+
+  <h2 class="mt-4">Required Competencies</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Competency</th>
+        <th scope="col">Level</th>
+        <th scope="col">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%requirements.forEach((requirement,index)=> {%>
+      <tr>
+        <th scope="row"><%=index+1%></th>
+        <td><%=requirement.competency%></td>
+        <td><%=requirement.level%></td>
+        <td><%=requirement.description%></td>
+      </tr>
+      <%})%>
+    </tbody>
+  </table>
+  <h2 class="mt-4">My Competencies</h2>
+  <form action="">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Competency</th>
+          <th scope="col">Level</th>
+          <th scope="col">Action Plan</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%competencies.forEach((competency, index)=> {%>
+        <tr>
+          <th scope="col"><%=index+1%></th>
+          <th scope="col"><%=competency.competency%></th>
+          <th scope="col"><%=competency.level%></th>
+          <th scope="col"><%=competency.action_plan%></th>
+        </tr>
+        <%})%>
+      </tbody>
+    </table>
+    <!-- <button class="btn btn-primary" type="submit">Submit</button> -->
+  </form>
+  <form action="/evaluationForm/<%=evaluationId%>/competencyCategories">
+    <button type="submit" class="btn btn-primary">Add Competency</button>
+  </form>
+</div>
+<%-include('partials/footer')%>
