@@ -6,13 +6,25 @@ import methodOverride from 'method-override';
 import jsSHA from 'jssha';
 
 // pg setup
-const pgConnectionconfigs = {
-  user: 'postgres',
-  host: 'localhost',
-  password: 'postgres',
-  database: 'tna',
-  port: 5432,
-};
+let pgConnectionconfigs;
+if (process.env.ENV === 'PRODUCTION') {
+  pgConnectionconfigs = {
+    user: 'postgres',
+    password: process.env.DB_PASSWORD,
+    host: 'localhost',
+    database: 'tna',
+    port: 5432,
+  };
+} else {
+  pgConnectionconfigs = {
+    user: 'postgres',
+    host: 'localhost',
+    password: 'postgres',
+    database: 'tna',
+    port: 5432,
+  };
+}
+
 const { Pool } = pg;
 const pool = new Pool(pgConnectionconfigs);
 pool.connect();
@@ -112,6 +124,7 @@ app.post('/login', (req, res) => {
       shaObj2.update(`${user.id}-${SALT}`);
       const hashedCookieString = shaObj2.getHash('HEX');
       res.cookie('loggedInHash', hashedCookieString);
+      res.cookie('loggedIn', true);
       res.cookie('userId', user.id);
       res.redirect('/action');
     })
@@ -158,7 +171,6 @@ app.get('/verifyEvaluations', (req, res) => {
   pool.query(`SELECT * FROM employees INNER JOIN evaluations ON employees.id = evaluations.employee_id WHERE employees.manager_id = ${userId} AND evaluations.status = 'pending approval' OR evaluations.status = 'approved'`)
     .then((result) => {
       const evaluations = result.rows;
-      console.log(evaluations);
       res.render('verifyEvaluations', { evaluations });
     });
 });

@@ -17,3 +17,6 @@ INSERT INTO job_category (name) VALUES ('HR');
 INSERT INTO job_category (name) VALUES ('ICT');
 INSERT INTO job_category (name) VALUES ('Logistics');
 INSERT INTO job_category (name) VALUES ('Training and Education');
+
+job_titles => job_titles_HR.csv
+general_job_requirements => general_job_requirements_HR.csv
