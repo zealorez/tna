@@ -55,14 +55,9 @@ app.use('/evaluationForm/:evaluationId', (req, res, next) => {
 
 const SALT = 'secret';
 
-app.get('/home', (req, res) => {
-  res.send('banana');
-});
-
-// create a app.use function to verify hashedcookie
-
 // render sign up page
 app.get('/signup', (req, res) => {
+  const { loggedIn } = req.cookies;
   let jobCategories;
   let jobs;
   // get all job categories
@@ -78,7 +73,9 @@ app.get('/signup', (req, res) => {
     })
     .then((result) => {
       const managers = result.rows;
-      res.render('signup', { jobCategories, jobs, managers });
+      res.render('signup', {
+        jobCategories, jobs, managers, loggedIn,
+      });
     });
 });
 
@@ -100,7 +97,8 @@ app.post('/signup', (req, res) => {
 
 // render login page
 app.get('/login', (req, res) => {
-  res.render('login');
+  const { loggedIn } = req.cookies;
+  res.render('login', { loggedIn });
 });
 
 // verify user to allow them to login
@@ -138,14 +136,23 @@ app.post('/login', (req, res) => {
     });
 });
 
+app.get('/logout', (req, res) => {
+  res.clearCookie('loggedInHash');
+  res.clearCookie('loggedIn');
+  res.clearCookie('userId');
+  res.clearCookie('evaluationId');
+  res.redirect('/login');
+});
+
 // page to show either verify evaluation or submit new evaluation (after log in)
 app.get('/action', (req, res) => {
-  res.render('action');
+  const { loggedIn } = req.cookies;
+  res.render('action', { loggedIn });
 });
 
 // page with all the evaluations for an employee
 app.get('/evaluations', (req, res) => {
-  const { userId } = req.cookies;
+  const { userId, loggedIn } = req.cookies;
   // check if user is a manager
   pool.query(`SELECT * FROM employees WHERE manager_id=${userId}`)
     .then((result) => {
@@ -154,7 +161,7 @@ app.get('/evaluations', (req, res) => {
   pool.query(`SELECT * FROM  evaluations WHERE employee_id = ${userId}`)
     .then((result) => {
       const evaluations = result.rows;
-      res.render('evaluations', { evaluations });
+      res.render('evaluations', { evaluations, loggedIn });
     });
 });
 
@@ -172,16 +179,17 @@ app.post('/evaluations', (req, res) => {
 });
 
 app.get('/verifyEvaluations', (req, res) => {
-  const { userId } = req.cookies;
+  const { userId, loggedIn } = req.cookies;
   pool.query(`SELECT * FROM employees INNER JOIN evaluations ON employees.id = evaluations.employee_id WHERE employees.manager_id = ${userId} AND evaluations.status = 'pending approval' OR evaluations.status = 'approved'`)
     .then((result) => {
       const evaluations = result.rows;
-      res.render('verifyEvaluations', { evaluations });
+      res.render('verifyEvaluations', { evaluations, loggedIn });
     });
 });
 
 // employee evaluation form
 app.get('/evaluationForm/:evaluationId', (req, res) => {
+  const { loggedIn } = req.cookies;
   const { evaluationId } = req.params;
   const { isManager } = req;
   let jobInfo;
@@ -220,7 +228,7 @@ app.get('/evaluationForm/:evaluationId', (req, res) => {
     .then((result) => {
       const managerInput = result.rows;
       res.render('evaluationForm', {
-        requirements, jobInfo, evaluationId, competencies, status, isManager, name, managerInput,
+        requirements, jobInfo, evaluationId, competencies, status, isManager, name, managerInput, loggedIn,
       });
     });
 });
@@ -243,13 +251,14 @@ app.put('/evaluationForm/:evaluationId', (req, res) => {
 
 // list the 2 competency categories
 app.get('/evaluationForm/:evaluationId/competencyCategories', (req, res) => {
+  const { loggedIn } = req.cookies;
   const { evaluationId } = req.params;
-  res.render('competencyCategories', { evaluationId });
+  res.render('competencyCategories', { evaluationId, loggedIn });
 });
 
 // page with required competencies for specific job and list of competencies for a chosen category
 app.get('/evaluationForm/:evaluationId/:category/competencies', (req, res) => {
-  const { userId } = req.cookies;
+  const { userId, loggedIn } = req.cookies;
   const { category, evaluationId } = req.params;
   let requiredCompetencies = {};
   // get id of job title
@@ -267,14 +276,14 @@ app.get('/evaluationForm/:evaluationId/:category/competencies', (req, res) => {
     .then((result) => {
       const categoryCompetencies = result.rows;
       res.render('competencies', {
-        requiredCompetencies, categoryCompetencies, category, evaluationId,
+        requiredCompetencies, categoryCompetencies, category, evaluationId, loggedIn,
       });
     });
 });
 
 // list out the levels of a specific competency and highlight the required competency (if there is)
 app.get('/evaluationForm/:evaluationId/:category/competencies/:competencyId', (req, res) => {
-  const { userId } = req.cookies;
+  const { userId, loggedIn } = req.cookies;
   const { evaluationId, competencyId, category } = req.params;
   let competency = {};
   let requirements;
@@ -304,7 +313,7 @@ app.get('/evaluationForm/:evaluationId/:category/competencies/:competencyId', (r
     .then((result) => {
       const employeeCompetencies = result.rows[0];
       res.render('competencySelection', {
-        competency, requirements, evaluationId, category, competencyId, employeeCompetencies,
+        competency, requirements, evaluationId, category, competencyId, employeeCompetencies, loggedIn,
       });
     });
 });
@@ -320,7 +329,7 @@ app.delete('/evaluationForm/:evaluationId/:category/competencies/:competencyId',
 // edit page for competency selection
 app.get('/evaluationForm/:evaluationId/:category/competencies/:competencyId/edit', (req, res) => {
   const { isManager } = req;
-  const { userId } = req.cookies;
+  const { userId, loggedIn } = req.cookies;
   const { evaluationId, competencyId, category } = req.params;
   let competency = {};
   let requirements;
@@ -350,7 +359,7 @@ app.get('/evaluationForm/:evaluationId/:category/competencies/:competencyId/edit
     .then((result) => {
       const employeeCompetencies = result.rows[0];
       res.render('competencySelectionEdit', {
-        competency, requirements, evaluationId, category, competencyId, employeeCompetencies, isManager,
+        competency, requirements, evaluationId, category, competencyId, employeeCompetencies, isManager, loggedIn,
       });
     });
 });

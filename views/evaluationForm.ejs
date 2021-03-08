@@ -45,7 +45,7 @@
           <th scope="col">Competency</th>
           <th scope="col">Level</th>
           <th scope="col">Action Plan</th>
-          <%if (status !== 'pending approval') {%>
+          <%if (status !== 'pending approval' && status !== 'approved') {%>
           <th scope="col">Edit</th>
           <%}%>
         </tr>
@@ -57,6 +57,7 @@
           <th scope="col"><%=competencies[i].competency%></th>
           <th scope="col"><%=competencies[i].level%></th>
           <th scope="col"><%=competencies[i].action_plan%></th>
+          <%if (status !== 'approved') {%>
           <th scope="col">
             <a
               href="/evaluationForm/<%=evaluationId%>/general/competencies/<%=competencies[i].general_competencies_id%>/edit"
@@ -77,15 +78,16 @@
                 /></svg
             ></a>
           </th>
+          <%}%>
         </tr>
         <tr>
           <th scope="col">Manager Input</th>
           <th scope="col"><%=competencies[i].competency%></th>
-          <%if (managerInput[i].level !== undefined) {%>
+          <%if (managerInput[i]) {%>
           <th scope="col"><%=managerInput[i].level%></th>
           <%} else {%>
           <th scope="col"></th>
-          <%}%> <%if (managerInput[i].level !== undefined) {%>
+          <%}%> <%if (managerInput[i]) {%>
           <th scope="col"><%=managerInput[i].manager_comment%></th>
           <%} else {%>
           <th scope="col"></th>
