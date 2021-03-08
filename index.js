@@ -54,6 +54,10 @@ app.use('/evaluationForm/:evaluationId', (req, res, next) => {
 
 const SALT = 'secret';
 
+app.get('/home', (req, res) => {
+  res.send('banana');
+});
+
 // create a app.use function to verify hashedcookie
 
 // render sign up page
