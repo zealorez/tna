@@ -1,0 +1,18 @@
+<%-include('partials/header')%><%-include('partials/navbar')%>
+<div class="container">
+  <div class="row">
+    <%evaluations.forEach((evaluation)=> {%>
+    <div class="card mt-3 col-4" style="width: 18rem">
+      <div class="card-body">
+        <h5 class="card-title"><%=evaluation.name%></h5>
+        <p class="card-text"><%=evaluation.status%></p>
+        <p class="card-text"><%=evaluation.date%></p>
+        <a href="/evaluationForm/<%=evaluation.id%>" class="btn btn-primary"
+          >View</a
+        >
+      </div>
+    </div>
+    <%})%>
+  </div>
+</div>
+<%-include('partials/footer')%>

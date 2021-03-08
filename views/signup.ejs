@@ -1,0 +1,88 @@
+<%-include('partials/header')%><%-include('partials/navbar')%>
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">TNA</h1>
+    <p class="lead">Login below or click sign up if you are new with us!</p>
+    <hr class="my-4" />
+    <form action="/signup" method="POST">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input name="name" type="text" class="form-control" id="name" />
+      </div>
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input
+          name="email"
+          type="email"
+          class="form-control"
+          id="email"
+          aria-describedby="emailHelp"
+        />
+        <small id="emailHelp" class="form-text text-muted"
+          >We'll never share your email with anyone else.</small
+        >
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          name="password"
+          type="password"
+          class="form-control"
+          id="password"
+        />
+      </div>
+      <label for="">Job Title</label>
+      <div class="accordion" id="accordionExample">
+        <%jobCategories.forEach((category)=> {%>
+        <div class="card">
+          <div class="card-header" id="headingOne">
+            <h2 class="mb-0">
+              <button
+                class="btn btn-link btn-block text-left"
+                type="button"
+                data-toggle="collapse"
+                data-target="#<%=category.name.replace(/ /g, '')%>"
+                aria-expanded="false"
+                aria-controls="<%=category.name.replace(/ /g, '')%>"
+              >
+                <%=category.name%>
+              </button>
+            </h2>
+          </div>
+          <div
+            id="<%=category.name.replace(/ /g, '')%>"
+            class="collapse"
+            aria-labelledby="<%=category.name.replace(/ /g, '')%>"
+            data-parent="#accordionExample"
+          >
+            <div class="input-group mb-3">
+              <select
+                name="jobId"
+                class="custom-select"
+                id="inputGroupSelect01"
+              >
+                <option disabled selected value>--- Select a Job ---</option>
+                <%jobs.forEach((job)=>{%> <%if (category.id ===
+                job.job_category_id){%>
+                <option value="<%=job.id%>"><%=job.job_title%></option>
+                <%}%> <%})%>
+              </select>
+            </div>
+          </div>
+        </div>
+        <%})%>
+      </div>
+      <label class="mt-4" for="manager">Manager</label>
+      <div class="input-group mb-3">
+        <select class="custom-select" name="managerId" id="manager">
+          <option selected disabled value>--- Select your Manager ---</option>
+          <%managers.forEach((manager)=> {%>
+          <option value="<%=manager.id%>"><%=manager.name%></option>
+          <%})%>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary mt-3">Sign Up</button>
+    </form>
+  </div>
+</div>
+<%-include('partials/footer')%>

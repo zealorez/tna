@@ -1,0 +1,167 @@
+<%-include('partials/header')%> <%-include('partials/navbar')%>
+<div class="container">
+  <h2 class="mt-2"><%=competency.competency%></h2>
+  <!-- manager Interface -->
+  <%if (isManager) {%>
+  <form
+    action="/evaluationForm/<%=evaluationId%>/<%=category%>/competencies/<%=competencyId%>/managerEdit?_method=PUT"
+    method="POST"
+  >
+    <%competency.info.forEach((level,index)=> {%> <% for(let i=0; i <
+    requirements.length;i +=1) { %> <%if
+    (requirements[i].competency===level.competency &&
+    requirements[i].level===level.level) { %>
+    <div style="background-color: yellow" class="card">
+      <div class="card-body">
+        <div class="form-check">
+          <%if (employeeCompetencies.general_levels_id == level.id) {%>
+          <input
+            class="form-check-input"
+            type="radio"
+            name="levelId"
+            id="exampleRadios<%=index%>"
+            value="<%=level.id%>"
+            checked
+          />
+          <%} else {%>
+          <input
+            class="form-check-input"
+            type="radio"
+            name="levelId"
+            id="exampleRadios<%=index%>"
+            value="<%=level.id%>"
+          />
+          <%}%>
+          <label class="form-check-label" for="exampleRadios<%=index%>">
+            <h5><%=level.level%></h5>
+          </label>
+          <p class="card-text"><%=level.description%></p>
+        </div>
+      </div>
+    </div>
+    <%return%> <%}%> <%}%>
+    <div class="card">
+      <div class="card-body">
+        <div class="form-check">
+          <%if (employeeCompetencies.manager_level_id == level.id) {%>
+          <input
+            class="form-check-input"
+            type="radio"
+            name="levelId"
+            id="exampleRadios<%=index%>"
+            value="<%=level.id%>"
+            checked
+          />
+          <%} else {%>
+          <input
+            class="form-check-input"
+            type="radio"
+            name="levelId"
+            id="exampleRadios<%=index%>"
+            value="<%=level.id%>"
+          />
+          <%}%>
+          <label class="form-check-label" for="exampleRadios<%=index%>">
+            <h5><%=level.level%></h5>
+          </label>
+          <p class="card-text"><%=level.description%></p>
+        </div>
+      </div>
+    </div>
+    <%})%>
+    <div>
+      <label class="mt-5" for="actionPlan"><h3>Action Plan</h3></label>
+    </div>
+    <textarea name="actionPlan" id="actionPlan" cols="100" rows="3" disabled>
+<%=employeeCompetencies.action_plan%></textarea
+    >
+    <div>
+      <label class="mt-5" for="actionPlan"><h3>Manager Comments</h3></label>
+    </div>
+    <textarea name="actionPlan" id="actionPlan" cols="100" rows="3">
+<%=employeeCompetencies.manager_comment%></textarea
+    >
+    <div>
+      <button class="btn btn-primary" type="submit">Submit Changes</button>
+    </div>
+  </form>
+  <%} else {%>
+  <form
+    action="/evaluationForm/<%=evaluationId%>/<%=category%>/competencies/<%=competencyId%>/edit?_method=PUT"
+    method="POST"
+  >
+    <%competency.info.forEach((level,index)=> {%> <% for(let i=0; i <
+    requirements.length;i +=1) { %> <%if
+    (requirements[i].competency===level.competency &&
+    requirements[i].level===level.level) { %>
+    <div style="background-color: yellow" class="card">
+      <div class="card-body">
+        <div class="form-check">
+          <%if (employeeCompetencies.general_levels_id == level.id) {%>
+          <input
+            class="form-check-input"
+            type="radio"
+            name="levelId"
+            id="exampleRadios<%=index%>"
+            value="<%=level.id%>"
+            checked
+          />
+          <%} else {%>
+          <input
+            class="form-check-input"
+            type="radio"
+            name="levelId"
+            id="exampleRadios<%=index%>"
+            value="<%=level.id%>"
+          />
+          <%}%>
+          <label class="form-check-label" for="exampleRadios<%=index%>">
+            <h5><%=level.level%></h5>
+          </label>
+          <p class="card-text"><%=level.description%></p>
+        </div>
+      </div>
+    </div>
+    <%return%> <%}%> <%}%>
+    <div class="card">
+      <div class="card-body">
+        <div class="form-check">
+          <%if (employeeCompetencies.general_levels_id == level.id) {%>
+          <input
+            class="form-check-input"
+            type="radio"
+            name="levelId"
+            id="exampleRadios<%=index%>"
+            value="<%=level.id%>"
+            checked
+          />
+          <%} else {%>
+          <input
+            class="form-check-input"
+            type="radio"
+            name="levelId"
+            id="exampleRadios<%=index%>"
+            value="<%=level.id%>"
+          />
+          <%}%>
+          <label class="form-check-label" for="exampleRadios<%=index%>">
+            <h5><%=level.level%></h5>
+          </label>
+          <p class="card-text"><%=level.description%></p>
+        </div>
+      </div>
+    </div>
+    <%})%>
+    <div>
+      <label class="mt-5" for="actionPlan"><h3>Action Plan</h3></label>
+    </div>
+    <textarea name="actionPlan" id="actionPlan" cols="100" rows="3">
+<%=employeeCompetencies.action_plan%></textarea
+    >
+    <div>
+      <button class="btn btn-primary" type="submit">Submit Changes</button>
+    </div>
+  </form>
+  <%}%>
+</div>
+<%-include('partials/footer')%>

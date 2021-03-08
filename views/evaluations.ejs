@@ -2,8 +2,10 @@
 <div class="container">
   <h1 class="h1">Evaluations</h1>
   <ul class="list-group">
-    <%dates.forEach((date)=> {%>
-    <li class="list-group-item"><%=date.date%> <%})%></li>
+    <%evaluations.forEach((evaluation)=> {%>
+    <a href="/evaluationForm/<%=evaluation.id%>"
+      ><li class="list-group-item"><%=evaluation.date%> <%})%></li></a
+    >
   </ul>
   <form action="/evaluations" method="POST">
     <button type="submit" class="btn btn-primary mt-2">New Evaluation</button>
