@@ -25,6 +25,7 @@ if (process.env.ENV === 'PRODUCTION') {
   };
 }
 
+const PORT = process.argv[2] || 3000;
 const { Pool } = pg;
 const pool = new Pool(pgConnectionconfigs);
 pool.connect();
@@ -401,5 +402,5 @@ app.post('/competencies', (req, res) => {
   res.redirect('employeeEvaluation');
 });
 
-app.listen(3000, () => { console.log('listening on port 3000');
+app.listen(PORT, () => { console.log(`listening on port ${PORT}`);
 });
