@@ -81,11 +81,11 @@
         <tr>
           <th scope="col">Manager Input</th>
           <th scope="col"><%=competencies[i].competency%></th>
-          <%if (managerInput[i].level) {%>
+          <%if (managerInput[i].level !== undefined) {%>
           <th scope="col"><%=managerInput[i].level%></th>
           <%} else {%>
           <th scope="col"></th>
-          <%}%> <%if (managerInput[i].level) {%>
+          <%}%> <%if (managerInput[i].level !== undefined) {%>
           <th scope="col"><%=managerInput[i].manager_comment%></th>
           <%} else {%>
           <th scope="col"></th>
