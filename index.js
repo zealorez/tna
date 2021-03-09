@@ -4,6 +4,7 @@ import pg from 'pg';
 import cookieParser from 'cookie-parser';
 import methodOverride from 'method-override';
 import jsSHA from 'jssha';
+import moment from 'moment';
 
 // pg setup
 let pgConnectionconfigs;
@@ -148,6 +149,79 @@ app.get('/logout', (req, res) => {
   res.clearCookie('userId');
   res.clearCookie('evaluationId');
   res.redirect('/login');
+});
+
+app.get('/hr', (req, res) => {
+  const { loggedIn } = req.cookies;
+  const { sortBy } = req.query;
+  // query information on all evaluations
+  pool.query('SELECT * FROM evaluations INNER JOIN employees ON employees.id = evaluations.employee_id INNER JOIN job_titles ON employees.job_title_id = job_titles.id')
+    .then((result) => {
+      const evaluations = result.rows;
+
+      // sort alphabetically
+      function sortAlphabetically(a, b) {
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+        return 0;
+      }
+
+      // sort alphabetically
+      function sortReverseAlphabetically(a, b) {
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+        if (nameA < nameB) {
+          return 1;
+        }
+        if (nameA > nameB) {
+          return -1;
+        }
+        return 0;
+      }
+
+      // oldest to latest
+      function sortByReverseDate(a, b) {
+        const dateA = moment(a.date, 'DD-MM-YYYY');
+        const dateB = moment(b.date, 'DD-MM-YYYY');
+        if (dateA < dateB) {
+          return -1;
+        }
+        if (dateA > dateB) {
+          return 1;
+        }
+        return 0;
+      }
+
+      // oldest to latest
+      function sortByDate(a, b) {
+        const dateA = moment(a.date, 'DD-MM-YYYY');
+        const dateB = moment(b.date, 'DD-MM-YYYY');
+        if (dateA < dateB) {
+          return 1;
+        }
+        if (dateA > dateB) {
+          return -1;
+        }
+        return 0;
+      }
+
+      if (sortBy === 'alphabetical') {
+        evaluations.sort(sortAlphabetically);
+      } else if (sortBy === 'reverse-alphabetical') {
+        evaluations.sort(sortReverseAlphabetically);
+      } else if (sortBy === 'reverse-date') {
+        evaluations.sort(sortByReverseDate);
+      } else if (sortBy === 'date') {
+        evaluations.sort(sortByDate);
+      }
+      res.render('hr', { loggedIn, evaluations });
+    });
 });
 
 // page to show either verify evaluation or submit new evaluation (after log in)

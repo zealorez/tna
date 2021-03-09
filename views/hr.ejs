@@ -1,0 +1,48 @@
+<%-include('partials/header')%><%-include('partials/navbar')%>
+<div class="container">
+  <h1>Employee Evaluations</h1>
+  <div class="dropdown">
+    <button
+      class="btn btn-secondary dropdown-toggle"
+      type="button"
+      id="dropdownMenuButton"
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="false"
+    >
+      Sort
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item" href="/hr?sortBy=alphabetical">A-Z</a>
+      <a class="dropdown-item" href="/hr?sortBy=reverse-alphabetical">Z-A</a>
+      <a class="dropdown-item" href="/hr?sortBy=date">Latest to Oldest</a>
+      <a class="dropdown-item" href="/hr?sortBy=reverse-date"
+        >Oldest to Latest`</a
+      >
+    </div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Job</th>
+        <th scope="col">Status</th>
+        <th scope="col">Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%evaluations.forEach((evaluation, index)=> { %>
+      <tr>
+        <th scope="row"><%=index+1%></th>
+        <td><%=evaluation.name%></td>
+        <td><%=evaluation.job_title%></td>
+        <td><%=evaluation.status%></td>
+        <td><%=evaluation.date%></td>
+      </tr>
+      <%})%>
+    </tbody>
+  </table>
+</div>
+
+<%-include('partials/footer')%>
