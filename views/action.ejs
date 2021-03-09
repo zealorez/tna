@@ -5,27 +5,29 @@
   <hr class="my-4" />
   <div class="row">
     <div class="card col-4 mt-3">
-      <div class="card-body">
+      <div class="card-body d-flex flex-column">
         <h5 class="card-title">For submission of new evaluation</h5>
         <form action="/evaluations" method="POST">
-          <button type="submit" class="btn btn-primary mt-2">
+          <button type="submit" class="btn btn-primary mt-auto w-100">
             New Evaluation
           </button>
         </form>
       </div>
     </div>
     <div class="card col-4 mt-3">
-      <div class="card-body">
+      <div class="card-body d-flex flex-column">
         <h5 class="card-title">For managers to approve evaluations</h5>
-        <a class="btn btn-primary" href="/verifyEvaluations"
+        <a class="btn btn-primary mt-auto" href="/verifyEvaluations"
           >Approve Evaluations</a
         >
       </div>
     </div>
     <div class="card col-4 mt-3">
-      <div class="card-body">
+      <div class="card-body d-flex flex-column">
         <h5 class="card-title">For viewing of all evaluations</h5>
-        <a class="btn btn-primary" href="/evaluations">View Evaluations</a>
+        <a class="btn btn-primary mt-auto" href="/evaluations"
+          >View Evaluations</a
+        >
       </div>
     </div>
   </div>

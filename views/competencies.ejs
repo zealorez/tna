@@ -17,9 +17,9 @@
       <%categoryCompetencies.forEach((competency, index)=> {%> <%for(let i =0; i
       < requiredCompetencies.length; i+= 1) {%> <%if
       (requiredCompetencies[i].competency == competency.competency) {%>
-      <tr>
+      <tr class="bg-warning">
         <th scope="row"><%=index+1%></th>
-        <td style="background-color: yellow"><%=competency.competency%></td>
+        <td><%=competency.competency%></td>
         <td><%=competency.description%></td>
         <td>
           <a

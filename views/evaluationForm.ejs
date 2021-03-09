@@ -26,7 +26,7 @@
     </thead>
     <tbody>
       <%requirements.forEach((requirement,index)=> {%>
-      <tr>
+      <tr class="bg-warning">
         <th scope="row"><%=index+1%></th>
         <td><%=requirement.competency%></td>
         <td><%=requirement.level%></td>
@@ -154,7 +154,7 @@
           <th scope="col">
             <button
               formaction="/evaluationForm/<%=evaluationId%>/general/competencies/<%=competency.general_competencies_id%>?_method=DELETE"
-              class="btn"
+              class="btn p-0"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

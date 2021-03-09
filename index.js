@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import methodOverride from 'method-override';
 import jsSHA from 'jssha';
 import moment from 'moment';
+import e from 'express';
 
 // pg setup
 let pgConnectionconfigs;
@@ -110,6 +111,7 @@ app.get('/login', (req, res) => {
 
 // verify user to allow them to login
 app.post('/login', (req, res) => {
+  const { hr } = req.body;
   // clear any existing cookies
   res.clearCookie('loggedInHash');
   res.clearCookie('userId');
@@ -136,7 +138,11 @@ app.post('/login', (req, res) => {
       res.cookie('loggedInHash', hashedCookieString);
       res.cookie('loggedIn', true);
       res.cookie('userId', user.id);
-      res.redirect('/action');
+      if (hr === 'hr') {
+        res.redirect('hr');
+      } else {
+        res.redirect('/action');
+      }
     })
     .catch((err) => {
       res.status(404).send('Unable to login. Please try again!');
@@ -220,7 +226,7 @@ app.get('/hr', (req, res) => {
       } else if (sortBy === 'date') {
         evaluations.sort(sortByDate);
       }
-      res.render('hr', { loggedIn, evaluations });
+      res.render('hr', { loggedIn, evaluations, moment });
     });
 });
 
@@ -241,7 +247,7 @@ app.get('/evaluations', (req, res) => {
   pool.query(`SELECT * FROM  evaluations WHERE employee_id = ${userId}`)
     .then((result) => {
       const evaluations = result.rows;
-      res.render('evaluations', { evaluations, loggedIn });
+      res.render('evaluations', { evaluations, loggedIn, moment });
     });
 });
 
@@ -263,7 +269,7 @@ app.get('/verifyEvaluations', (req, res) => {
   pool.query(`SELECT * FROM employees INNER JOIN evaluations ON employees.id = evaluations.employee_id WHERE employees.manager_id = ${userId} AND evaluations.status = 'pending approval' OR evaluations.status = 'approved'`)
     .then((result) => {
       const evaluations = result.rows;
-      res.render('verifyEvaluations', { evaluations, loggedIn });
+      res.render('verifyEvaluations', { evaluations, loggedIn, moment });
     });
 });
 

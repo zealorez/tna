@@ -4,7 +4,9 @@
   <ul class="list-group">
     <%evaluations.forEach((evaluation)=> {%>
     <a href="/evaluationForm/<%=evaluation.id%>"
-      ><li class="list-group-item"><%=evaluation.date%> <%})%></li></a
+      ><li class="list-group-item">
+        <%=moment(evaluation.date).format("MMMM Do YYYY, HH:mm")%> <%})%>
+      </li></a
     >
   </ul>
 </div>

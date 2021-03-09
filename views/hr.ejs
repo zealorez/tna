@@ -38,7 +38,7 @@
         <td><%=evaluation.name%></td>
         <td><%=evaluation.job_title%></td>
         <td><%=evaluation.status%></td>
-        <td><%=evaluation.date%></td>
+        <td><%=moment(evaluation.date).format("MMMM Do YYYY, HH:mm")%></td>
       </tr>
       <%})%>
     </tbody>
