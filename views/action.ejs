@@ -1,19 +1,32 @@
 <%-include('partials/header')%><%-include('partials/navbar')%>
-<div class="container">
+<div class="jumbotron mx-5">
+  <h1 class="display-4">Welcome to TNA</h1>
+  <p class="lead">A platform to streamline evaluation of employees</p>
+  <hr class="my-4" />
   <div class="row">
-    <div class="card col mt-3">
-      <a href="/evaluations">
-        <div class="card-body">
-          <p class="card-text">Submit New Evalation</p>
-        </div>
-      </a>
+    <div class="card col-4 mt-3">
+      <div class="card-body">
+        <h5 class="card-title">For submission of new evaluation</h5>
+        <form action="/evaluations" method="POST">
+          <button type="submit" class="btn btn-primary mt-2">
+            New Evaluation
+          </button>
+        </form>
+      </div>
     </div>
-    <div class="card col mt-3">
-      <a href="/verifyEvaluations">
-        <div class="card-body">
-          <p class="card-text">View Evaluations</p>
-        </div>
-      </a>
+    <div class="card col-4 mt-3">
+      <div class="card-body">
+        <h5 class="card-title">For managers to approve evaluations</h5>
+        <a class="btn btn-primary" href="/verifyEvaluations"
+          >Approve Evaluations</a
+        >
+      </div>
+    </div>
+    <div class="card col-4 mt-3">
+      <div class="card-body">
+        <h5 class="card-title">For viewing of all evaluations</h5>
+        <a class="btn btn-primary" href="/evaluations">View Evaluations</a>
+      </div>
     </div>
   </div>
 </div>

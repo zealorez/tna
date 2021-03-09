@@ -55,6 +55,12 @@ app.use('/evaluationForm/:evaluationId', (req, res, next) => {
 
 const SALT = 'secret';
 
+// home page
+app.get('/', (req, res) => {
+  const { loggedIn } = req.cookies;
+  res.render('home', { loggedIn });
+});
+
 // render sign up page
 app.get('/signup', (req, res) => {
   const { loggedIn } = req.cookies;
@@ -345,7 +351,7 @@ app.get('/evaluationForm/:evaluationId/:category/competencies/:competencyId/edit
       competency.info = result.rows;
     })
     // get job title id
-    .then(() => pool.query(`SELECT job_title_id from employees WHERE id = '${userId}'`))
+    .then(() => pool.query(`SELECT employees.job_title_id FROM employees INNER JOIN evaluations on employees.id = evaluations.employee_id WHERE evaluations.id = ${evaluationId}`))
     .then((result) => {
       const { job_title_id } = result.rows[0];
       return pool.query(`SELECT general_levels.level, general_levels.description, general_competencies.competency, general_competencies.description FROM general_levels INNER JOIN general_job_requirement ON general_job_requirement.general_levels_id = general_levels.id INNER JOIN general_competencies ON general_competencies.id = general_levels.general_competency_id WHERE general_job_requirement.job_title_id = ${job_title_id}`);
