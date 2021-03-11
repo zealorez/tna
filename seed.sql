@@ -2,7 +2,7 @@
 
 \copy job_titles(job_title, job_category_id) FROM '/home/zephaniah/tna/job_titles_HR.csv' DELIMITER ',' CSV HEADER;
 
-\copy general_job_requirement(job_title_id, general_levels_id) FROM '/home/zephaniah/tna general_job_requirements_HR.csv' DELIMITER ',' CSV HEADER;
+\copy general_job_requirement(job_title_id, general_levels_id) FROM '/home/zephaniah/tna/general_job_requirements_HR.csv' DELIMITER ',' CSV HEADER;
 
 \copy general_levels(general_competency_id, level, description) FROM '/home/zephaniah/tna/general_levels.csv' DELIMITER ',' CSV HEADER;
 
