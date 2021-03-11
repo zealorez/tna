@@ -5,17 +5,18 @@ import cookieParser from 'cookie-parser';
 import methodOverride from 'method-override';
 import jsSHA from 'jssha';
 import moment from 'moment';
-import e from 'express';
+import multer from 'multer';
+import aws from 'aws-sdk';
+import multerS3 from 'multer-s3';
 
 // pg setup
 let pgConnectionconfigs;
-if (process.env.ENV === 'PRODUCTION') {
+if (process.env.DATABASE_URL) {
   pgConnectionconfigs = {
-    user: 'postgres',
-    password: process.env.DB_PASSWORD,
-    host: 'localhost',
-    database: 'tna',
-    port: 5432,
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false,
+    },
   };
 } else {
   pgConnectionconfigs = {
@@ -27,10 +28,31 @@ if (process.env.ENV === 'PRODUCTION') {
   };
 }
 
-const PORT = process.argv[2] || 3000;
+const PORT = process.env.PORT || 3000;
 const { Pool } = pg;
 const pool = new Pool(pgConnectionconfigs);
 pool.connect();
+
+// configure s3
+const s3 = new aws.S3({
+  accessKeyId: process.env.ACCESSKEYID,
+  secretAccessKey: process.env.SECRETACCESSKEY,
+});
+
+// multer setup
+const multerUpload = multer({
+  storage: multerS3({
+    s3,
+    bucket: '<MY_BUCKET_NAME>',
+    acl: 'public-read',
+    metadata: (request, file, callback) => {
+      callback(null, { fieldName: file.fieldname });
+    },
+    key: (request, file, callback) => {
+      callback(null, Date.now().toString());
+    },
+  }),
+});
 
 // express setup
 const app = express();
@@ -38,6 +60,7 @@ app.set('view engine', 'ejs');
 app.use(methodOverride('_method'));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
+app.use(express.static('uploads'));
 // check if user is the manager of the evaluation form
 app.use('/evaluationForm/:evaluationId', (req, res, next) => {
   req.isManager = false;
@@ -57,10 +80,13 @@ app.use('/evaluationForm/:evaluationId', (req, res, next) => {
 
 const SALT = 'secret';
 
-// home page
-app.get('/', (req, res) => {
-  const { loggedIn } = req.cookies;
-  res.render('home', { loggedIn });
+app.get('/recipe', (req, res) => {
+  res.render('form');
+});
+
+app.post('/recipe', multerUpload.single('photo'), (req, res) => {
+  console.log(req.file);
+  res.send(req.file);
 });
 
 // render sign up page
