@@ -36,6 +36,7 @@
     </tbody>
   </table>
   <%if (isManager) {%>
+  <!-- Manager's Interface -->
   <h2 class="mt-4"><%=name%>'s Competencies</h2>
   <form action="/evaluationForm/<%=evaluationId%>?_method=PUT" method="POST">
     <table class="table">
@@ -45,6 +46,8 @@
           <th scope="col">Competency</th>
           <th scope="col">Level</th>
           <th scope="col">Action Plan</th>
+          <th scope="col">Manager Level</th>
+          <th scope="col">Manager Comments</th>
           <%if (status !== 'pending approval' && status !== 'approved') {%>
           <th scope="col">Edit</th>
           <%}%>
@@ -57,7 +60,15 @@
           <th scope="col"><%=competencies[i].competency%></th>
           <th scope="col"><%=competencies[i].level%></th>
           <th scope="col"><%=competencies[i].action_plan%></th>
-          <%if (status !== 'approved') {%>
+          <%if (managerInput[i]) {%>
+          <th scope="col"><%=managerInput[i].level%></th>
+          <%} else {%>
+          <th scope="col"></th>
+          <%}%> <%if (managerInput[i]) {%>
+          <th scope="col"><%=managerInput[i].manager_comment%></th>
+          <%} else {%>
+          <th scope="col"></th>
+          <%}%> <%if (status !== 'approved') {%>
           <th scope="col">
             <a
               href="/evaluationForm/<%=evaluationId%>/general/competencies/<%=competencies[i].general_competencies_id%>/edit"
@@ -78,36 +89,27 @@
                 /></svg
             ></a>
           </th>
-          <%}%>
+          <%}%><%}%>
         </tr>
-        <tr>
-          <th scope="col">Manager Input</th>
-          <th scope="col"><%=competencies[i].competency%></th>
-          <%if (managerInput[i]) {%>
-          <th scope="col"><%=managerInput[i].level%></th>
-          <%} else {%>
-          <th scope="col"></th>
-          <%}%> <%if (managerInput[i]) {%>
-          <th scope="col"><%=managerInput[i].manager_comment%></th>
-          <%} else {%>
-          <th scope="col"></th>
-          <%}%>
-        </tr>
-
-        <%}%>
       </tbody>
     </table>
-    <%if (status == 'approved') {%>
-    <button class="btn btn-primary" type="submit" disabled>Approved</button>
+    <%if (status == 'pending approval') {%>
+    <button class="btn btn-primary" disabled>Pending Approval</button>
+    <%} else if (status == 'approved') {%>
+    <button class="btn btn-primary" disabled type="submit">Approved</button>
     <%} else {%>
-    <button class="btn btn-primary" type="submit">Approve</button>
+    <button class="btn btn-primary" type="submit">Submit</button>
     <%}%>
   </form>
   <%}else {%>
+
+  <!-- User's Interface -->
   <h2 class="mt-4">My Competencies</h2>
 
   <form action="/evaluationForm/<%=evaluationId%>/competencyCategories">
+    <%if (status !== 'pending approval' && status !== 'approved') {%>
     <button type="submit" class="btn btn-secondary">Add Competency</button>
+    <%}%>
   </form>
   <form action="/evaluationForm/<%=evaluationId%>?_method=PUT" method="POST">
     <table class="table">
@@ -117,7 +119,7 @@
           <th scope="col">Competency</th>
           <th scope="col">Level</th>
           <th scope="col">Action Plan</th>
-          <%if (status !== 'pending approval') {%>
+          <%if (status !== 'pending approval' && status !== 'approved') {%>
           <th scope="col">Edit</th>
           <th scope="col">Delete</th>
           <%}%>
@@ -130,7 +132,7 @@
           <th scope="col"><%=competency.competency%></th>
           <th scope="col"><%=competency.level%></th>
           <th scope="col"><%=competency.action_plan%></th>
-          <%if (status !== 'pending approval') {%>
+          <%if (status !== 'pending approval' && status !== 'approved') {%>
           <th scope="col">
             <a
               href="/evaluationForm/<%=evaluationId%>/general/competencies/<%=competency.general_competencies_id%>/edit"
@@ -181,6 +183,8 @@
     </table>
     <%if (status == 'pending approval') {%>
     <button class="btn btn-primary" disabled>Pending Approval</button>
+    <%} else if (status == 'approved') {%>
+    <button class="btn btn-primary" disabled type="submit">Approved</button>
     <%} else {%>
     <button class="btn btn-primary" type="submit">Submit</button>
     <%}%>

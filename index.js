@@ -22,7 +22,7 @@ if (process.env.DATABASE_URL) {
   pgConnectionconfigs = {
     user: 'postgres',
     host: 'localhost',
-    password: 'postgres',
+    password: 'password',
     database: 'tna',
     port: 5432,
   };
@@ -79,15 +79,6 @@ app.use('/evaluationForm/:evaluationId', (req, res, next) => {
 });
 
 const SALT = 'secret';
-
-app.get('/recipe', (req, res) => {
-  res.render('form');
-});
-
-app.post('/recipe', multerUpload.single('photo'), (req, res) => {
-  console.log(req.file);
-  res.send(req.file);
-});
 
 // render sign up page
 app.get('/signup', (req, res) => {
@@ -185,11 +176,17 @@ app.get('/logout', (req, res) => {
 
 app.get('/hr', (req, res) => {
   const { loggedIn } = req.cookies;
-  const { sortBy } = req.query;
+  const { sortBy, filter } = req.query;
+  let evaluations;
+  let distinctEmployees;
   // query information on all evaluations
-  pool.query('SELECT * FROM evaluations INNER JOIN employees ON employees.id = evaluations.employee_id INNER JOIN job_titles ON employees.job_title_id = job_titles.id')
+  pool.query('SELECT DISTINCT employees.name, employees.id FROM employees INNER JOIN evaluations ON employees.id = evaluations.employee_id')
     .then((result) => {
-      const evaluations = result.rows;
+      distinctEmployees = result.rows;
+      return pool.query('SELECT employees.name, job_titles.job_title, evaluations.id as evaluationId, employees.id as employeeId, evaluations.status, evaluations.date FROM evaluations INNER JOIN employees ON employees.id = evaluations.employee_id INNER JOIN job_titles ON employees.job_title_id = job_titles.id');
+    })
+    .then((result) => {
+      evaluations = result.rows;
 
       // sort alphabetically
       function sortAlphabetically(a, b) {
@@ -252,7 +249,14 @@ app.get('/hr', (req, res) => {
       } else if (sortBy === 'date') {
         evaluations.sort(sortByDate);
       }
-      res.render('hr', { loggedIn, evaluations, moment });
+      if (filter !== undefined) {
+        evaluations = evaluations.filter((evaluation) => evaluation.employeeid === Number(filter));
+      }
+    })
+    .then(() => {
+      res.render('hr', {
+        loggedIn, evaluations, moment, distinctEmployees,
+      });
     });
 });
 
@@ -292,7 +296,7 @@ app.post('/evaluations', (req, res) => {
 
 app.get('/verifyEvaluations', (req, res) => {
   const { userId, loggedIn } = req.cookies;
-  pool.query(`SELECT * FROM employees INNER JOIN evaluations ON employees.id = evaluations.employee_id WHERE employees.manager_id = ${userId} AND evaluations.status = 'pending approval' OR evaluations.status = 'approved'`)
+  pool.query(`SELECT * FROM employees INNER JOIN evaluations ON employees.id = evaluations.employee_id WHERE employees.manager_id = ${userId} AND (evaluations.status = 'pending approval' OR evaluations.status = 'approved')`)
     .then((result) => {
       const evaluations = result.rows;
       res.render('verifyEvaluations', { evaluations, loggedIn, moment });
