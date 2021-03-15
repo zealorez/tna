@@ -327,7 +327,7 @@ app.get('/evaluationForm/:evaluationId', (req, res) => {
     })
     .then((result) => {
       requirements = result.rows;
-      return pool.query(`SELECT employee_competencies.general_competencies_id, employee_competencies.general_levels_id, employee_competencies.action_plan, general_competencies.competency, general_levels.level FROM employee_competencies INNER JOIN general_levels ON employee_competencies.general_levels_id = general_levels.id INNER JOIN general_competencies ON general_levels.general_competency_id = general_competencies.id WHERE employee_competencies.evaluations_id = ${evaluationId}`);
+      return pool.query(`SELECT employee_competencies.manager_level_id, employee_competencies.manager_comment, employee_competencies.general_competencies_id, employee_competencies.general_levels_id, employee_competencies.action_plan, general_competencies.competency, general_levels.level FROM employee_competencies INNER JOIN general_levels ON employee_competencies.general_levels_id = general_levels.id INNER JOIN general_competencies ON general_levels.general_competency_id = general_competencies.id WHERE employee_competencies.evaluations_id = ${evaluationId}`);
     })
     .then((result) => {
       competencies = result.rows;
@@ -343,6 +343,8 @@ app.get('/evaluationForm/:evaluationId', (req, res) => {
       pool.query(`SELECT employee_competencies.manager_level_id, employee_competencies.manager_comment, general_levels.level FROM employee_competencies INNER JOIN general_levels ON employee_competencies.manager_level_id = general_levels.id WHERE employee_competencies.evaluations_id = ${evaluationId}`))
     .then((result) => {
       const managerInput = result.rows;
+      console.log('competencies', competencies);
+      console.log('manager', managerInput);
       res.render('evaluationForm', {
         requirements, jobInfo, evaluationId, competencies, status, isManager, name, managerInput, loggedIn,
       });
