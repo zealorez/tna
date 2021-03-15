@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-return */
-import express from 'express';
+import express, { query } from 'express';
 import pg from 'pg';
 import cookieParser from 'cookie-parser';
 import methodOverride from 'method-override';
@@ -28,7 +28,7 @@ if (process.env.DATABASE_URL) {
   };
 }
 
-const PORT = process.env.PORT || 3004;
+const PORT = process.env.PORT || 3000;
 const { Pool } = pg;
 const pool = new Pool(pgConnectionconfigs);
 pool.connect();
@@ -313,6 +313,7 @@ app.get('/evaluationForm/:evaluationId', (req, res) => {
   let competencies;
   let name;
   let status;
+  const levelObject = {};
   // get user's name
   pool.query(`SELECT name from employees INNER JOIN evaluations ON evaluations.employee_id = employees.id WHERE evaluations.id=${evaluationId}`)
   // get job_title_id of the evaluation form
@@ -327,27 +328,44 @@ app.get('/evaluationForm/:evaluationId', (req, res) => {
     })
     .then((result) => {
       requirements = result.rows;
-      return pool.query(`SELECT employee_competencies.manager_level_id, employee_competencies.manager_comment, employee_competencies.general_competencies_id, employee_competencies.general_levels_id, employee_competencies.action_plan, general_competencies.competency, general_levels.level FROM employee_competencies INNER JOIN general_levels ON employee_competencies.general_levels_id = general_levels.id INNER JOIN general_competencies ON general_levels.general_competency_id = general_competencies.id WHERE employee_competencies.evaluations_id = ${evaluationId}`);
+      // all of user's competencies AND manager edits
+      return pool.query(`SELECT employee_competencies.id AS employee_competencies_id, employee_competencies.manager_level_id, employee_competencies.manager_comment, employee_competencies.general_competencies_id, employee_competencies.general_levels_id, employee_competencies.action_plan, general_competencies.competency, general_levels.level 
+      FROM employee_competencies 
+      INNER JOIN general_levels 
+      ON employee_competencies.general_levels_id = general_levels.id 
+      INNER JOIN general_competencies 
+      ON general_levels.general_competency_id = general_competencies.id 
+      WHERE employee_competencies.evaluations_id = ${evaluationId}`);
     })
     .then((result) => {
       competencies = result.rows;
+      const competencyIds = (competencies.map((c) => c.employee_competencies_id));
+      const queryString = `SELECT general_levels.level, employee_competencies.manager_level_id, employee_competencies.manager_comment, employee_competencies.id FROM general_levels INNER JOIN employee_competencies ON employee_competencies.manager_level_id = general_levels.id WHERE employee_competencies.id IN (${competencyIds.join()})`;
+      if (competencyIds.join() !== '') {
+        return pool.query(queryString);
+      }
     })
-    .then(() =>
+    .then((result) => {
+      if (result !== undefined) { result.rows.forEach((level) => {
+        levelObject[level.id] = level;
+      }); }
       // check status of form
-      pool.query(`SELECT status FROM evaluations WHERE id=${evaluationId}`))
+      return pool.query(`SELECT status FROM evaluations WHERE id=${evaluationId}`);
+    })
     .then((result) => {
       status = result.rows[0].status;
     })
-    .then((result) =>
-    // get manager input
-      pool.query(`SELECT employee_competencies.manager_level_id, employee_competencies.manager_comment, general_levels.level FROM employee_competencies INNER JOIN general_levels ON employee_competencies.manager_level_id = general_levels.id WHERE employee_competencies.evaluations_id = ${evaluationId}`))
-    .then((result) => {
-      const managerInput = result.rows;
-      console.log('competencies', competencies);
-      console.log('manager', managerInput);
+    .then(() => {
+      for (let i = 0; i < competencies.length; i += 1) {
+        const id = competencies[i].employee_competencies_id;
+        competencies[i].managerLevel = levelObject[id];
+      }
       res.render('evaluationForm', {
-        requirements, jobInfo, evaluationId, competencies, status, isManager, name, managerInput, loggedIn,
+        requirements, jobInfo, evaluationId, competencies, status, isManager, name, loggedIn,
       });
+    })
+    .catch((err) => {
+      console.log('query err', err);
     });
 });
 

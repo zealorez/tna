@@ -60,12 +60,12 @@
           <th scope="col"><%=competencies[i].competency%></th>
           <th scope="col"><%=competencies[i].level%></th>
           <th scope="col"><%=competencies[i].action_plan%></th>
-          <%if (managerInput[i]) {%>
-          <th scope="col"><%=managerInput[i].level%></th>
+          <%if (competencies[i].managerLevel) {%>
+          <th scope="col"><%=competencies[i].managerLevel.level%></th>
           <%} else {%>
           <th scope="col"></th>
-          <%}%> <%if (managerInput[i]) {%>
-          <th scope="col"><%=managerInput[i].manager_comment%></th>
+          <%}%> <%if (competencies[i].managerLevel) {%>
+          <th scope="col"><%=competencies[i].managerLevel.manager_comment%></th>
           <%} else {%>
           <th scope="col"></th>
           <%}%> <%if (status !== 'approved') {%>
@@ -94,7 +94,7 @@
       </tbody>
     </table>
     <%if (status == 'pending approval') {%>
-    <button class="btn btn-primary" disabled>Pending Approval</button>
+    <button class="btn btn-primary">Approve</button>
     <%} else if (status == 'approved') {%>
     <button class="btn btn-primary" disabled type="submit">Approved</button>
     <%} else {%>
