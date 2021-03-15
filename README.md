@@ -1,3 +1,3 @@
 # tna
 Streamlining HR process of evaluating new employees
-Youtube link explaining how the app works: https://youtu.be/uH-xrKLPX2E
+Youtube video explaining how the app works: https://youtu.be/YJdk06lZ_CQ
