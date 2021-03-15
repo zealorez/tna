@@ -28,7 +28,7 @@ if (process.env.DATABASE_URL) {
   };
 }
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3004;
 const { Pool } = pg;
 const pool = new Pool(pgConnectionconfigs);
 pool.connect();
@@ -501,7 +501,7 @@ app.put('/evaluationForm/:evaluationId/:category/competencies/:competencyId/mana
   const { levelId, actionPlan } = req.body;
   const { evaluationId, competencyId, category } = req.params;
   // update employee_competencies table based on manager edits
-  pool.query(`UPDATE employee_competencies SET manager_level_id=${levelId}, manager_comment='${actionPlan}' WHERE evaluations_id=${evaluationId} AND general_competencies_id=${competencyId}`)
+  pool.query(`UPDATE employee_competencies SET manager_level_id=${levelId}, manager_comment='${actionPlan}' WHERE (evaluations_id=${evaluationId} AND general_competencies_id=${competencyId})`)
     .then(() => {
       res.redirect(`/evaluationForm/${evaluationId}`);
     })
